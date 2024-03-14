@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.LvyouluxianDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.lvyouluxian_uuid_number as lvyouluxianUuidNumber
+        ,a.lvyouluxian_name as lvyouluxianName
+        ,a.lvyouluxian_types as lvyouluxianTypes
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.lvyouluxian_money as lvyouluxianMoney
+        ,a.lvyouluxian_photo as lvyouluxianPhoto
+        ,a.lvyouluxian_content as lvyouluxianContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.LvyouluxianView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM lvyouluxian  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.lvyouluxianUuidNumber != '' and params.lvyouluxianUuidNumber != null and params.lvyouluxianUuidNumber != 'null' ">
+                and a.lvyouluxian_uuid_number like CONCAT('%',#{params.lvyouluxianUuidNumber},'%')
+            </if>
+            <if test=" params.lvyouluxianName != '' and params.lvyouluxianName != null and params.lvyouluxianName != 'null' ">
+                and a.lvyouluxian_name like CONCAT('%',#{params.lvyouluxianName},'%')
+            </if>
+            <if test="params.lvyouluxianTypes != null and params.lvyouluxianTypes != ''">
+                and a.lvyouluxian_types = #{params.lvyouluxianTypes}
+            </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test="params.lvyouluxianMoneyStart != null ">
+                <![CDATA[  and a.lvyouluxian_money >= #{params.lvyouluxianMoneyStart}   ]]>
+            </if>
+            <if test="params.lvyouluxianMoneyEnd != null ">
+                <![CDATA[  and a.lvyouluxian_money <= #{params.lvyouluxianMoneyEnd}   ]]>
+            </if>
+            <if test=" params.lvyouluxianContent != '' and params.lvyouluxianContent != null and params.lvyouluxianContent != 'null' ">
+                and a.lvyouluxian_content like CONCAT('%',#{params.lvyouluxianContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
